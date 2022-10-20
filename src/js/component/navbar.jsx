@@ -3,10 +3,19 @@ import {
     Link
 } from "react-router-dom";
 import { Context } from "../store/appContext";
+import { useHistory } from "react-router-dom";
 
 
 export const Navbar = () => {
     const { store, actions } = useContext(Context); 
+    let auth = store.auth
+    let navegacion = useHistory()
+
+    const logOut = () => {
+        let logeo = actions.loginout()
+        if(!logeo){navegacion.push("/")}
+    }
+
     return (
         <>
         <nav className = "navbar bg-light" >
@@ -19,7 +28,7 @@ export const Navbar = () => {
                         className="d-inline-block align-text-top" />
                 </a>     
 
-                <div className="nav-item dropdown">
+                {auth?<div className="nav-item dropdown">
                     <a className="nav-link dropdown-toggle" 
                     href="#" role="button" 
                     data-bs-toggle="dropdown" 
@@ -32,7 +41,10 @@ export const Navbar = () => {
                             {item} <i class="fa fa-trash float-end"></i></a>
                         </li>))}
                     </ul> 
-                    </div>  
+                    </div>:null }
+                    <div>
+                    {auth? <button type="button" className="btn btn-outline-dark" onClick={logOut}>Que la fuerza me acompañe!</button> : null}
+                    </div>
             </div> 
         </nav>
     </>

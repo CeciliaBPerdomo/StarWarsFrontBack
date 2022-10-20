@@ -10,6 +10,7 @@ const getState = ({
             planets: [],
             planet: {},
             favoritos: [],
+            auth: false
         },
 
         actions: {
@@ -97,6 +98,43 @@ const getState = ({
                     favoritos: sinEliminar
                 })
                 //console.log(store.favoritos)
+            },
+
+            // Logueo
+            login: async (email, password) => {
+                try {
+                    const response = await fetch('https://3000-ceciliabper-starwarscon-o02bkm0edan.ws-us72.gitpod.io/login', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            email: email,
+                            password: password
+                        }),
+                        headers: {
+                            "Content-type": "application/json"
+                        }
+                    })
+                    if (response.status === 200) {
+                        const data = await response.json()
+                        localStorage.setItem('token', data.access_token)
+                        console.log(data)
+                        setStore({
+                            auth: true
+                        })
+                        return true;
+                    }
+                } catch (error) {
+                    console.log(error)
+                    return false;
+                }
+            },
+
+            // DesLogueo
+            loginout: () => {
+                localStorage.removeItem('token')
+                setStore({
+                    auth: false
+                })
+                return false
             },
 
             // Use getActions to call a function within a function

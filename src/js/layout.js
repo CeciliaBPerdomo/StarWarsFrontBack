@@ -28,6 +28,10 @@ import {
     Navbar
 } from "./component/navbar.jsx";
 
+import {Login} from "./component/Login.jsx"
+
+import {Registrarse} from './component/registrarse.jsx'
+
 import {
     Footer
 } from "./component/footer";
@@ -50,6 +54,14 @@ const Layout = () => {
 
                     <Route exact path = "/demo">
                         <Demo />
+                    </Route>
+
+                    <Route exact path = "/Login">
+                        <Login />
+                    </Route>
+
+                    <Route exact path = "/registrarse">
+                        <Registrarse />
                     </Route>
 
                     <Route exact path = "/single/:theid">
