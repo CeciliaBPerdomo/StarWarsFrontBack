@@ -20,6 +20,11 @@ export const Login = () => {
         setPassword("")
     }
 
+    const unirse = (e) => {
+        e.preventDefault()
+        navegacion.push("/registrarse")
+    }
+
     return(
         <form onSubmit={ingreso}>
 
@@ -30,7 +35,7 @@ export const Login = () => {
                     id="exampleInputEmail1" 
                     aria-describedby="emailHelp"
                     onChange={(e) => setMail(e.target.value)}
-                    value={mail}/>
+                    value={mail} required/>
                 <div id="emailHelp" className="form-text">We'll never share your email with anyone else.</div>
             </div>
         
@@ -38,10 +43,12 @@ export const Login = () => {
                 <label htmlFor="exampleInputPassword1" className="form-label">Password</label>
                 <input type="password" className="form-control" id="exampleInputPassword1"
                 onChange={(e) => setPassword(e.target.value)}
-                value={password}/>
+                value={password} required/>
             </div>
             
             <button type="submit" className="btn btn-outline-dark">Unete al lado oscuro!</button>
+            <button type="submit" className="btn btn-outline-dark" onClick={unirse} 
+            style={{margin: "10px"}}>Chewie... registrate!</button>
         </form>
     )
 }

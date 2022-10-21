@@ -1,3 +1,4 @@
+import axios from 'axios';
 const getState = ({
     getStore,
     getActions,
@@ -10,7 +11,8 @@ const getState = ({
             planets: [],
             planet: {},
             favoritos: [],
-            auth: false
+            auth: false,
+            profile: {}
         },
 
         actions: {
@@ -100,12 +102,15 @@ const getState = ({
                 //console.log(store.favoritos)
             },
 
-            // Logueo
-            login: async (email, password) => {
+            //Registrarse
+            registro: async (name, lastname, username, email, password) => {
                 try {
-                    const response = await fetch('https://3000-ceciliabper-starwarscon-o02bkm0edan.ws-us72.gitpod.io/login', {
+                    const response = await fetch('https://3000-ceciliabper-starwarscon-81f5zcj4klc.ws-us72.gitpod.io/user', {
                         method: 'POST',
                         body: JSON.stringify({
+                            name: name,
+                            lastname: lastname,
+                            username: username,
                             email: email,
                             password: password
                         }),
@@ -116,7 +121,7 @@ const getState = ({
                     if (response.status === 200) {
                         const data = await response.json()
                         localStorage.setItem('token', data.access_token)
-                        console.log(data)
+                        //console.log(data)
                         setStore({
                             auth: true
                         })
@@ -124,7 +129,100 @@ const getState = ({
                     }
                 } catch (error) {
                     console.log(error)
-                    return false;
+                }
+            },
+
+            // Logueo
+            // login: async (email, password) => {
+            //     try {
+            //         const response = await fetch('https://3000-ceciliabper-starwarscon-o02bkm0edan.ws-us72.gitpod.io/login', {
+            //             method: 'POST',
+            //             body: JSON.stringify({
+            //                 email: email,
+            //                 password: password
+            //             }),
+            //             headers: {
+            //                 "Content-type": "application/json"
+            //             }
+            //         })
+            //         if (response.status === 200) {
+            //             const data = await response.json()
+            //             localStorage.setItem('token', data.access_token)
+            //             console.log(data)
+            //             setStore({
+            //                 auth: true
+            //             })
+            //             return true;
+            //         }
+            //     } catch (error) {
+            //         // error.response.data.msg
+            //         console.log(error)
+            //         return false;
+            //     }
+            // },
+
+            // Logueo con Axios
+            login: async (email, password) => {
+                try {
+                    const response = await axios.post('https://3000-ceciliabper-starwarscon-81f5zcj4klc.ws-us72.gitpod.io/login', {
+                        email: email,
+                        password: password
+                    })
+                    localStorage.setItem('token', response.data.access_token)
+                    setStore({
+                        auth: true
+                    })
+                    return true;
+                } catch (error) {
+                    if (error.code === "ERR_BAD_REQUEST") {
+                        console.log(error.response.data.msg)
+                    }
+                }
+            },
+
+            //Rutas protegidas
+            getProfile: async () => {
+                let accessToken = localStorage.getItem("token")
+                try {
+                    const response = await axios.get('https://3000-ceciliabper-starwarscon-81f5zcj4klc.ws-us72.gitpod.io/profile', {
+                        headers: { //Authorization: Bearer
+                            Authorization: "Bearer " + accessToken,
+                        }
+
+                    })
+                    setStore({
+                        profile: response.data.user
+                    })
+                    return true;
+                } catch (error) {
+                    if (error.code === "ERR_BAD_REQUEST") {
+                        console.log(error.response.data.msg)
+                    }
+                }
+            },
+
+            // Chequear que el token sea valido
+            checkValidToken: async () => {
+                let accessToken = localStorage.getItem("token")
+                try {
+                    const response = await axios.get('https://3000-ceciliabper-starwarscon-81f5zcj4klc.ws-us72.gitpod.io/validation', {
+                        headers: {
+                            // 'Authorization: Bearer
+                            Authorization: "Bearer " + accessToken,
+                        }
+                    })
+                    setStore({
+                        auth: response.data.status
+                    })
+                    return true
+                } catch (error) {
+                    if (error.code === "ERR_BAD_REQUEST") {
+                        setStore({
+                            auth: false
+                        })
+                        console.log(error.response.data.msg)
+                    }
+                    return false
                 }
             },
 
